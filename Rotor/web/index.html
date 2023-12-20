@@ -1,19 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
-    <link rel="stylesheet" type="text/css" href="your-new-stylesheet.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h2>Admin commands</h2>
-        <button id="checkDatabaseConnectionBtn">Check Database Connection</button>
+        <h2>Database</h2>
+        <button onclick="checkDatabaseConnection()">Check Database Connection</button>
+        <button onclick="createAdmin()">Create Admin</button>
         <div id="databaseConnectionDisplay"></div>
-        <button id="createDatabaseBtn">Create Database</button>
-        <button id="addUserBtn">Add Admin User</button>
-        <button id="getAllUsersBtn">Get All Users</button>
+
         <div id="userList"></div>
     </div>
     
@@ -26,7 +23,7 @@
             <label for="loginPassword">Password:</label>
             <input type="password" id="loginPassword" name="loginPassword" required>
             <br>
-            <button type="button" id="loginBtn">Login</button>
+            <button type="button" onclick="loginUser()">Login</button>
         </form>
         <div id="loginStatus"></div>
     </div>
@@ -40,16 +37,94 @@
             <label for="regPassword">Password:</label>
             <input type="password" id="regPassword" name="regPassword" required>
             <br>
-            <button type="button" id="registerBtn">Register</button>
+            <button type="button" onclick="registerUser()">Register</button>
             <div id="registrationStatus"></div>
         </form>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="index.js"></script>
+    <script>
+        function checkDatabaseConnection() {
+            $.ajax({
+                url: '/Rotor/api/orchestrator/checkDatabaseConnection',
+                method: 'GET',
+                success: function(response) {
+                    $('#databaseConnectionDisplay').text('Database Connection Status: ' + response.status);
+                },
+                error: function() {
+                    $('#databaseConnectionDisplay').text('Error checking database connection');
+                }
+            });
+        }
+        
+        function createAdmin() {
+            $.ajax({
+                url: '/Rotor/api/orchestrator/createAdmin',
+                method: 'POST',
+                success: function(response) {
+                    console.log(response);
+                    // You can handle the response as needed
+                },
+                error: function() {
+                    console.log('Error creating admin');
+                }
+            });
+        }
+
+        function registerUser() {
+            var username = $('#regUsername').val();
+            var password = $('#regPassword').val();
+
+            $.ajax({
+                url: '/Rotor/api/orchestrator/registerUser',
+                method: 'POST',
+                data: { username: username, password: password },
+                success: function(response) {
+                    $('#registrationStatus').text(response.status);
+                },
+                error: function() {
+                    $('#registrationStatus').text('Error registering user');
+                }
+            });
+        }
+
+        function loginUser() {
+            // Get user input for username and password
+            var username = $("#loginUsername").val();
+            var password = $("#loginPassword").val();
+
+            $.ajax({
+                url: '/Rotor/api/orchestrator/loginUser',
+                method: 'POST',
+                data: { username: username, password: password },
+                success: function(response) {
+                    if (response.status === "success") {
+                        // Get the user ID from the response
+                        var userId = response.userId;
+
+                        // Store user ID in session storage
+                        sessionStorage.setItem("userId", userId);
+
+                        // Redirect based on user ID
+                        if (userId === 12345) {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'mainmenu.html';
+                        }
+                    } else {
+                        // Display login error message
+                        $('#loginStatus').text('Login failed. ' + response.status);
+                    }
+                },
+                error: function() {
+                    $('#loginStatus').text('Error logging in');
+                }
+            });
+        }
+
+
+    </script>
 </body>
 </html>
-
 
 
 

@@ -1,22 +1,62 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>MainMenu</title>
+    <title>Main Menu</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="stylesheet.css">
 </head>
-
 <body>
-
-    
-
+    <div id="userContent">Loading user content...</div>
     <script>
+        // Function to fetch user-specific data
+        function fetchUserContent() {
+            $.ajax({
+                url: '/Rotor/api/orchestrator/getLoggedInUser',
+                method: 'GET',
+                success: function (response) {
+                    if (response.status === 'success') {
+                        // Fetch user-specific data based on the user ID
+                        var userId = response.userId;
+                        fetchUserSpecificData(userId);
+                    } else {
+                        $('#userContent').text('Error fetching user data');
+                    }
+                },
+                error: function () {
+                    $('#userContent').text('Error fetching user data');
+                }
+            });
+        }
 
+        // Function to fetch user-specific data
+        function fetchUserSpecificData(userId) {
+            $.ajax({
+                url: '/Rotor/api/orchestrator/getUserSpecificData?userId=' + userId,
+                method: 'GET',
+                success: function (response) {
+                    if (response.status === 'success') {
+                        // Update the content on the page with user-specific data
+                        var userData = response.data;
+                        $('#userContent').html(
+                            '<p>Username: ' + userData.username + '</p>' +
+                            '<p>Password: ' + userData.password + '</p>' +
+                            '<p>Hours: ' + userData.hours + '</p>'
+                        );
+                    } else {
+                        $('#userContent').text('Error fetching user-specific data');
+                    }
+                },
+                error: function () {
+                    $('#userContent').text('Error fetching user-specific data');
+                }
+            });
+        }
+
+        // Fetch user-specific content when the page loads
+        $(document).ready(function () {
+            fetchUserContent();
+        });
     </script>
-
-
 </body>
-
 </html>
-
