@@ -8,7 +8,7 @@ $(document).ready(function () {
 });
 
 function checkDatabaseConnection() {
-    fetch('/Rotor/api/controller/checkDatabaseConnection')
+    fetch('/Rotor/api/orchestrator/checkDatabaseConnection')
         .then(response => response.json())
         .then(data => {
             $('#databaseConnectionDisplay').text('Database Connection Status: ' + data.status);
@@ -19,7 +19,8 @@ function checkDatabaseConnection() {
 }
 
 function createDatabase() {
-    fetch('/Rotor/api/controller/createDatabase')
+    
+    fetch('/Rotor/api/orchestrator/createDatabase')
         .then(response => response.json())
         .then(data => {
             $('#databaseConnectionDisplay').text(data.status);
@@ -30,7 +31,7 @@ function createDatabase() {
 }
 
 function addUser() {
-    fetch('/Rotor/api/controller/addUser')
+    fetch('/Rotor/api/orchestrator/addUser')
         .then(response => response.json())
         .then(data => {
             $('#databaseConnectionDisplay').text(data.status);
@@ -41,7 +42,7 @@ function addUser() {
 }
 
 function getAllUsers() {
-    fetch('/Rotor/api/controller/getAllUsers')
+    fetch('/Rotor/api/orchestrator/getAllUsers')
         .then(response => response.json())
         .then(data => {
             var userListHtml = '<h3>All Users</h3><ul>';
@@ -60,7 +61,7 @@ function registerUser() {
     var username = $('#regUsername').val();
     var password = $('#regPassword').val();
 
-    fetch('/Rotor/api/controller/registerUser', {
+    fetch('/Rotor/api/orchestrator/registerUser', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `username=${username}&password=${password}`
@@ -78,7 +79,7 @@ function loginUser() {
     var username = $("#loginUsername").val();
     var password = $("#loginPassword").val();
 
-    fetch('/Rotor/api/controller/loginUser', {
+    fetch('/Rotor/api/orchestrator/loginUser', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `username=${username}&password=${password}`
