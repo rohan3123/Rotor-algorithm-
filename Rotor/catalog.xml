@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/C:/Users/Rohan/Documents/GitHub/trip-planner/RestService/../book.xsd" uri="src/conf/xml-resources/jaxb/Book/book.xsd"/>
+    <system systemId="file:/C:/Users/Rohan/Documents/GitHub/trip-planner/RestService/../user.xsd" uri="src/conf/xml-resources/jaxb/user/user.xsd"/>
+</catalog>

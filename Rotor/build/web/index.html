@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" type="text/css" href="your-new-stylesheet.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Admin commands</h2>
+        <button id="checkDatabaseConnectionBtn">Check Database Connection</button>
+        <div id="databaseConnectionDisplay"></div>
+        <button id="createDatabaseBtn">Create Database</button>
+        <button id="addUserBtn">Add Admin User</button>
+        <button id="getAllUsersBtn">Get All Users</button>
+        <div id="userList"></div>
+    </div>
+    
+    <div class="form-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="loginUsername">Username:</label>
+            <input type="text" id="loginUsername" name="loginUsername" required>
+            <br>
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" name="loginPassword" required>
+            <br>
+            <button type="button" id="loginBtn">Login</button>
+        </form>
+        <div id="loginStatus"></div>
+    </div>
+
+    <div class="form-container">
+        <h2>Registration</h2>
+        <form id="registrationForm">
+            <label for="regUsername">Username:</label>
+            <input type="text" id="regUsername" name="regUsername" required>
+            <br>
+            <label for="regPassword">Password:</label>
+            <input type="password" id="regPassword" name="regPassword" required>
+            <br>
+            <button type="button" id="registerBtn">Register</button>
+            <div id="registrationStatus"></div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
+
+
+
+
