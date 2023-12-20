@@ -193,35 +193,41 @@ public class Orchestrator {
 
 
     @GET
-    @Path("/getAllUsers")
+    @Path("/viewAllUsers")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getAllUsers() {
-        List<User> userList = new ArrayList<>();
-
+    public String viewAllUsers() throws JSONException {
         try {
             // Connect to SQLite database
             try (Connection connection = DriverManager.getConnection(DB_PATH)) {
                 // Select all users from the users table
-                String getAllUsersQuery = "SELECT * FROM users";
+                String getAllUsersQuery = "SELECT id, username, hours FROM users";
                 try (PreparedStatement getAllUsersStatement = connection.prepareStatement(getAllUsersQuery)) {
                     ResultSet resultSet = getAllUsersStatement.executeQuery();
+
+                    JSONArray userList = new JSONArray();
 
                     while (resultSet.next()) {
                         int userId = resultSet.getInt("id");
                         String username = resultSet.getString("username");
-                        String password = resultSet.getString("password");
+                        int hours = resultSet.getInt("hours");
 
-                        User user = new User(userId, username, password);
-                        userList.add(user);
+                        JSONObject userObject = new JSONObject();
+                        userObject.put("id", userId);
+                        userObject.put("username", username);
+                        userObject.put("hours", hours);
+
+                        userList.put(userObject);
                     }
+
+                    return userList.toString();
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return "{ \"status\": \"Failed to fetch users. Error: " + e.getMessage() + "\" }";
         }
-
-        return userList;
     }
+
     
     @POST
     @Path("/registerUser")
