@@ -83,20 +83,27 @@
                 url: '/Rotor/api/orchestrator/loginUser',
                 method: 'POST',
                 data: { username: username, password: password },
-                success: function(response) {
+                success: function (response) {
                     if (response.status === "success") {
-                        // Redirect to dashboard.html upon successful login
-                        window.location.href = 'dashboard.html';
+                        // Check user ID and redirect accordingly
+                        if (response.userId === 12345) {
+                            // Redirect to admin.html for user with ID 12345
+                            window.location.href = 'admin.html';
+                        } else {
+                            // Redirect to mainmenu.html for other users
+                            window.location.href = 'mainmenu.html';
+                        }
                     } else {
                         // Display login error message
                         $('#loginStatus').text('Login failed. ' + response.status);
                     }
                 },
-                error: function() {
+                error: function () {
                     $('#loginStatus').text('Error logging in');
-                }
-            });
-        }
+                    }
+                });
+            }
+
     </script>
 </body>
 </html>
