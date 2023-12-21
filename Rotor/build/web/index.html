@@ -5,42 +5,30 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h2>Database</h2>
         <button onclick="checkDatabaseConnection()">Check Database Connection</button>
-        <button onclick="createAdmin()">Create Admin</button>
         <div id="databaseConnectionDisplay"></div>
-
+        <button onclick="addUser()">Add Admin User</button>
         <div id="userList"></div>
-    </div>
     
-    <div class="form-container">
         <h2>Login</h2>
-        <form id="loginForm">
-            <label for="loginUsername">Username:</label>
-            <input type="text" id="loginUsername" name="loginUsername" required>
-            <br>
-            <label for="loginPassword">Password:</label>
-            <input type="password" id="loginPassword" name="loginPassword" required>
-            <br>
-            <button type="button" onclick="loginUser()">Login</button>
-        </form>
+        <label for="loginUsername">Username:</label>
+        <input type="text" id="loginUsername" name="loginUsername" required>
+        <br>
+        <label for="loginPassword">Password:</label>
+        <input type="password" id="loginPassword" name="loginPassword" required>
+        <br>
+        <button type="button" onclick="loginUser()">Login</button>
         <div id="loginStatus"></div>
-    </div>
 
-    <div class="form-container">
         <h2>Registration</h2>
-        <form id="registrationForm">
-            <label for="regUsername">Username:</label>
-            <input type="text" id="regUsername" name="regUsername" required>
-            <br>
-            <label for="regPassword">Password:</label>
-            <input type="password" id="regPassword" name="regPassword" required>
-            <br>
-            <button type="button" onclick="registerUser()">Register</button>
-            <div id="registrationStatus"></div>
-        </form>
-    </div>
+        <label for="regUsername">Username:</label>
+        <input type="text" id="regUsername" name="regUsername" required>
+        <br>
+        <label for="regPassword">Password:</label>
+        <input type="password" id="regPassword" name="regPassword" required>
+        <br>
+        <button type="button" onclick="registerUser()">Register</button>
+        <div id="registrationStatus"></div>
 
     <script>
         function checkDatabaseConnection() {
@@ -55,17 +43,16 @@
                 }
             });
         }
-        
-        function createAdmin() {
+
+        function addUser() {
             $.ajax({
-                url: '/Rotor/api/orchestrator/createAdmin',
-                method: 'POST',
+                url: '/Rotor/api/orchestrator/addUser',
+                method: 'GET',
                 success: function(response) {
-                    console.log(response);
-                    // You can handle the response as needed
+                    $('#databaseConnectionDisplay').text(response.status);
                 },
                 error: function() {
-                    console.log('Error creating admin');
+                    $('#databaseConnectionDisplay').text('Error adding user');
                 }
             });
         }
@@ -98,18 +85,8 @@
                 data: { username: username, password: password },
                 success: function(response) {
                     if (response.status === "success") {
-                        // Get the user ID from the response
-                        var userId = response.userId;
-
-                        // Store user ID in session storage
-                        sessionStorage.setItem("userId", userId);
-
-                        // Redirect based on user ID
-                        if (userId === 12345) {
-                            window.location.href = 'admin.html';
-                        } else {
-                            window.location.href = 'mainmenu.html';
-                        }
+                        // Redirect to dashboard.html upon successful login
+                        window.location.href = 'dashboard.html';
                     } else {
                         // Display login error message
                         $('#loginStatus').text('Login failed. ' + response.status);
@@ -120,11 +97,8 @@
                 }
             });
         }
-
-
     </script>
 </body>
 </html>
-
 
 

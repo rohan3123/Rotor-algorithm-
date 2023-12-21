@@ -13,21 +13,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class User {
+
     private int id;
     private String username;
     private String password;
     private int hours;
 
-    // Existing constructor
-    public User(int id, String username, String password) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        // Set a default value for hours or modify as needed
-        this.hours = 0;
+    public User() {
+        // Default constructor
     }
 
-    // New constructor with four parameters
     public User(int id, String username, String password, int hours) {
         this.id = id;
         this.username = username;
@@ -35,16 +30,6 @@ public class User {
         this.hours = hours;
     }
 
-    
-
-    // Empty constructor
-    public User() {
-        // Default constructor
-    }
-
-    // Getter and setter methods...
-
-    // Getter and setter methods for 'id'
     public int getId() {
         return id;
     }
@@ -53,7 +38,6 @@ public class User {
         this.id = id;
     }
 
-    // Getter and setter methods for 'username'
     public String getUsername() {
         return username;
     }
@@ -62,7 +46,6 @@ public class User {
         this.username = username;
     }
 
-    // Getter and setter methods for 'password'
     public String getPassword() {
         return password;
     }
@@ -71,7 +54,6 @@ public class User {
         this.password = password;
     }
 
-    // Getter and setter methods for 'hours'
     public int getHours() {
         return hours;
     }
@@ -80,5 +62,3 @@ public class User {
         this.hours = hours;
     }
 }
-
-
