@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+
+<body>
+    
+    <h2>Admin Menu</h2>
+    <br>
+    <button onclick="getAllUsers()">View All Users</button>
+    <div id="allUsersDisplay"></div>
+
+    <label for="userIdInput">User ID:</label>
+    <input type="text" id="userIdInput" name="userIdInput" required>
+    <br>
+    <label for="hoursInput">Hours:</label>
+    <input type="number" id="hoursInput" name="hoursInput" required>
+    <br>
+    <button onclick="updateUserHours()">Update User Hours</button>
+    <div id="updateUserHoursStatus"></div>
+    
+
+    <script>
+
+        function getAllUsers() {
+            // Make an AJAX request to get all users
+            $.ajax({
+                url: '/RestService/api/orchestrator/getAllUsers',
+                method: 'GET',
+                success: function (response) {
+                    // Display all users in the "allUsersDisplay" element
+                    $('#allUsersDisplay').html(formatUserList(response));
+                },
+                error: function () {
+                    // Handle error, if needed
+                    $('#allUsersDisplay').text('Error fetching user data');
+                }
+            });
+        }
+
+        function formatUserList(data) {
+            var userListHtml = "<strong>All Users:</strong><br>";
+
+            // Check if there is any user data
+            if (data && data.length > 0) {
+                // Iterate through each user entry and display the details
+                data.forEach(function (user) {
+                    userListHtml += "<div><strong>User ID:</strong> " + user.id +
+                        " | <strong>Username:</strong> " + user.username +
+                        " | <strong>Password:</strong> " + user.password +
+                        " | <strong>Hours:</strong> " + user.hours + "</div>";
+                });
+            } else {
+                userListHtml += "No users found.";
+            }
+
+            return userListHtml;
+        }
+
+        function updateUserHours() {
+            // Get the user ID and hours from the input fields
+            var userId = $("#userIdInput").val();
+            var hours = $("#hoursInput").val();
+
+            // Check if the user ID and hours are not empty
+            if (!userId || !hours) {
+                $('#updateUserHoursStatus').text("Please enter User ID and Hours.");
+                return;
+            }
+
+            // Make an AJAX request to update user hours
+            $.ajax({
+                url: "/RestService/api/orchestrator/updateUserHours",
+                method: "POST",
+                data: {
+                    // Include user ID and hours in the form data
+                    userId: userId,
+                    hours: hours
+                },
+                success: function (response) {
+                    // Display the status of updating user hours in the "updateUserHoursStatus" element
+                    $('#updateUserHoursStatus').text(response.status);
+                },
+                error: function (xhr, status, error) {
+                    // Handle AJAX request error, if needed
+                    $('#updateUserHoursStatus').text("Error updating user hours: " + error);
+                },
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Main Menu</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+</head>
+
+<body>
+    <div class="form-container">
+        <h2>Main Menu</h2>
+        <button onclick="getLoggedInUserData()">View My Details</button>
+        <div id="loggedInUserDisplay"></div>
+    </div>
+
+
+    <script>
+        function getLoggedInUserData() {
+            // Make an AJAX request to get logged-in user details
+            $.ajax({
+                url: '/RestService/api/orchestrator/getLoggedInUserData',
+                method: 'GET',
+                success: function (response) {
+                    // Display the logged-in user details in the "loggedInUserDisplay" element
+                    $('#loggedInUserDisplay').html(formatUserDetails(response));
+                },
+                error: function () {
+                    // Handle error, if needed
+                    $('#loggedInUserDisplay').text('Error fetching user details');
+                }
+            });
+        }
+
+        function formatUserDetails(userDetails) {
+            var userDetailsHtml = "<strong>My Details:</strong><br>";
+
+            if (userDetails && userDetails.length > 0) {
+                var user = userDetails[0];
+                userDetailsHtml += "<div><strong>User ID:</strong> " + user.id +
+                    " | <strong>Username:</strong> " + user.username +
+                    " | <strong>Password:</strong> " + user.password +
+                    " | <strong>Hours:</strong> " + user.hours + "</div>";
+            } else {
+                userDetailsHtml += "No user details found.";
+            }
+
+            return userDetailsHtml;
+        }
+
+    </script>
+</body>
+
+</html>
+
+
