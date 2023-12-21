@@ -346,8 +346,9 @@ public class Orchestrator {
     @GET
     @Path("/getUserSpecificData")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getUserSpecificData(@Context HttpServletRequest request) throws JSONException {
+    public List<User> getUserSpecificData(@Context HttpServletRequest request) {
         HttpSession session = request.getSession(false);
+        List<User> userList = new ArrayList<>();
 
         if (session != null) {
             User loggedInUser = (User) session.getAttribute("loggedInUser");
@@ -357,39 +358,33 @@ public class Orchestrator {
 
                 try {
                     // Connect to SQLite database
-                    try (Connection connection = DriverManager.getConnection(DB_PATH)) {
+                    try ( Connection connection = DriverManager.getConnection(DB_PATH)) {
                         // Fetch user-specific data from the users table based on user ID
                         String getUserDataQuery = "SELECT * FROM users WHERE id = ?";
-                        try (PreparedStatement getUserDataStatement = connection.prepareStatement(getUserDataQuery)) {
+                        try ( PreparedStatement getUserDataStatement = connection.prepareStatement(getUserDataQuery)) {
                             getUserDataStatement.setInt(1, userId);
-                            try (ResultSet resultSet = getUserDataStatement.executeQuery()) {
-                                if (resultSet.next()) {
-                                    // Return user-specific data as JSON
+                            try ( ResultSet resultSet = getUserDataStatement.executeQuery()) {
+                                while (resultSet.next()) {
+                                    // Create a User object and add it to the list
                                     String username = resultSet.getString("username");
                                     String password = resultSet.getString("password");
                                     int hours = resultSet.getInt("hours");
 
-                                    JSONObject userData = new JSONObject();
-                                    userData.put("username", username);
-                                    userData.put("password", password);
-                                    userData.put("hours", hours);
-
-                                    return "{ \"status\": \"success\", \"data\": " + userData.toString() + " }";
-                                } else {
-                                    return "{ \"status\": \"error\", \"message\": \"User not found\" }";
+                                    User userData = new User(userId, username, password, hours);
+                                    userList.add(userData);
                                 }
                             }
                         }
                     }
-                } catch (SQLException | JSONException e) {
+                } catch (SQLException e) {
                     e.printStackTrace();
-                    return "{ \"status\": \"error\", \"message\": \"Failed to fetch user data. Error: " + e.getMessage() + "\" }";
                 }
             }
         }
 
-        return "{ \"status\": \"error\", \"message\": \"User not logged in\" }";
+        return userList;
     }
+
     
     @POST
     @Path("/assignHours")

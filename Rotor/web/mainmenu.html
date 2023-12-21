@@ -7,56 +7,56 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <body>
+    <button onclick="checkDatabaseConnection()">Check Database Connection</button>
+    <div id="databaseConnectionDisplay"></div>
     <div id="userContent">Loading user content...</div>
+
+    <!-- Button to view user details -->
+    <button onclick="fetchUserContent()">View My Details</button>
+    
     <script>
+        function checkDatabaseConnection() {
+            $.ajax({
+                url: '/Rotor/api/orchestrator/checkDatabaseConnection',
+                method: 'GET',
+                success: function(response) {
+                    $('#databaseConnectionDisplay').text('Database Connection Status: ' + response.status);
+                },
+                error: function() {
+                    $('#databaseConnectionDisplay').text('Error checking database connection');
+                }
+            });
+        }
+
         // Function to fetch user-specific data
         function fetchUserContent() {
-            $.ajax({
-                url: '/Rotor/api/orchestrator/getLoggedInUser',
-                method: 'GET',
-                success: function (response) {
-                    if (response.status === 'success') {
-                        // Fetch user-specific data based on the user ID
-                        var userId = response.userId;
-                        fetchUserSpecificData(userId);
-                    } else {
-                        $('#userContent').text('Error fetching user data');
-                    }
-                },
-                error: function () {
-                    $('#userContent').text('Error fetching user data');
-                }
-            });
-        }
+            // Show loading message
+            $('#userContent').html('Loading user content...');
 
-        // Function to fetch user-specific data
-        function fetchUserSpecificData(userId) {
             $.ajax({
-                url: '/Rotor/api/orchestrator/getUserSpecificData?userId=' + userId,
+                url: '/Rotor/api/orchestrator/getUserSpecificData',
                 method: 'GET',
-                success: function (response) {
-                    if (response.status === 'success') {
+                success: function (users) {
+                    if (users.length > 0) {
                         // Update the content on the page with user-specific data
-                        var userData = response.data;
+                        var userData = users[0];
                         $('#userContent').html(
-                            '<p>Username: ' + userData.username + '</p>' +
-                            '<p>Password: ' + userData.password + '</p>' +
-                            '<p>Hours: ' + userData.hours + '</p>'
-                        );
-                    } else {
-                        $('#userContent').text('Error fetching user-specific data');
+                                '<p>Username: ' + userData.username + '</p>' +
+                                '<p>Hours: ' + userData.hours + '</p>'
+                                );
+                        } else {
+                            // No user data (user not logged in or session expired)
+                            $('#userContent').html('<p>User not logged in or session expired.</p>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Error fetching user data
+                        $('#userContent').html('<p>Error fetching user data. Status: ' + status + ', Error: ' + error + '</p>');
                     }
-                },
-                error: function () {
-                    $('#userContent').text('Error fetching user-specific data');
-                }
-            });
-        }
+                });
+            }
 
-        // Fetch user-specific content when the page loads
-        $(document).ready(function () {
-            fetchUserContent();
-        });
     </script>
 </body>
 </html>
+
