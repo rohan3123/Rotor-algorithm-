@@ -12,6 +12,8 @@
         
         <!-- Button to view all users -->
         <button onclick="viewAllUsers()">View All Users</button>
+        <button onclick="checkDatabaseConnection()">Check Database Connection</button>
+        <div id="databaseConnectionDisplay"></div>
         
         <hr>
         
@@ -26,33 +28,51 @@
             
             <button type="button" onclick="assignHours()">Assign Hours</button>
         </form>
+
+        <!-- Display area for user data -->
+        <div id="userList"></div>
     </div>
 
     <script>
-        // Function to view all users
+        function checkDatabaseConnection() {
+            $.ajax({
+                url: '/Rotor/api/orchestrator/checkDatabaseConnection',
+                method: 'GET',
+                success: function(response) {
+                    $('#databaseConnectionDisplay').text('Database Connection Status: ' + response.status);
+                },
+                error: function() {
+                    $('#databaseConnectionDisplay').text('Error checking database connection');
+                }
+            });
+        }
+        
         function viewAllUsers() {
             $.ajax({
                 url: '/Rotor/api/orchestrator/getAllUsers',
                 method: 'GET',
-                success: function (response) {
-                    if (response.status === 'success') {
-                        // Display user information (customize as needed)
-                        var userList = response.data;
-                        var userContent = userList.map(user => {
-                            return '<p>User ID: ' + user.id + ', Username: ' + user.username + '</p>';
-                        }).join('');
-                        $('#userContent').html(userContent);
-                    } else {
-                        alert('Error fetching user data');
-                    }
+                success: function(response) {
+                    // Handle the response and display user data on the page
+                    displayUserList(response);
                 },
-                error: function () {
-                    alert('Error fetching user data');
+                error: function() {
+                    // Handle the error
+                    console.error('Error fetching users.');
                 }
             });
         }
 
-        // Function to assign hours to a user
+        // Function to display user list
+        function displayUserList(users) {
+            // Clear existing content
+            $('#userList').empty();
+
+            // Display user data
+            users.forEach(function(user) {
+            $('#userList').append('<p>User ID: ' + user.id + ', Username: ' + user.username + ', Password: ' + user.password + ', Hours: ' + user.hours + '</p>');
+            });
+        }
+
         function assignHours() {
             var userId = $('#userId').val();
             var hours = $('#hours').val();
@@ -64,6 +84,7 @@
                 success: function (response) {
                     if (response.status === 'success') {
                         alert('Hours assigned successfully');
+                        // Optionally, refresh the user list or perform other actions
                     } else {
                         alert('Error assigning hours: ' + response.message);
                     }
@@ -73,6 +94,7 @@
                 }
             });
         }
+
     </script>
 </body>
 </html>

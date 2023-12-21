@@ -193,41 +193,35 @@ public class Orchestrator {
 
 
     @GET
-    @Path("/viewAllUsers")
+    @Path("/getAllUsers")
     @Produces(MediaType.APPLICATION_JSON)
-    public String viewAllUsers() throws JSONException {
+    public List<User> getAllUsers() {
+        List<User> userList = new ArrayList<>();
+
         try {
             // Connect to SQLite database
             try (Connection connection = DriverManager.getConnection(DB_PATH)) {
                 // Select all users from the users table
-                String getAllUsersQuery = "SELECT id, username, hours FROM users";
+                String getAllUsersQuery = "SELECT * FROM users";
                 try (PreparedStatement getAllUsersStatement = connection.prepareStatement(getAllUsersQuery)) {
                     ResultSet resultSet = getAllUsersStatement.executeQuery();
-
-                    JSONArray userList = new JSONArray();
 
                     while (resultSet.next()) {
                         int userId = resultSet.getInt("id");
                         String username = resultSet.getString("username");
-                        int hours = resultSet.getInt("hours");
+                        String password = resultSet.getString("password");
 
-                        JSONObject userObject = new JSONObject();
-                        userObject.put("id", userId);
-                        userObject.put("username", username);
-                        userObject.put("hours", hours);
-
-                        userList.put(userObject);
+                        User user = new User(userId, username, password);
+                        userList.add(user);
                     }
-
-                    return userList.toString();
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return "{ \"status\": \"Failed to fetch users. Error: " + e.getMessage() + "\" }";
         }
-    }
 
+        return userList;
+    }
     
     @POST
     @Path("/registerUser")
@@ -334,8 +328,6 @@ public class Orchestrator {
         return "{ \"status\": \"error\", \"message\": \"User not logged in\" }";
     }
 
-
-
     @GET
     @Path("/generateUserId")
     public int generateUserId() {
@@ -405,17 +397,17 @@ public class Orchestrator {
     public String assignHours(@FormParam("userId") int userId, @FormParam("hours") int hours) {
         try {
             // Connect to SQLite database
-            try (Connection connection = DriverManager.getConnection(DB_PATH)) {
+            try ( Connection connection = DriverManager.getConnection(DB_PATH)) {
                 // Check if the user with the given ID exists
                 String checkUserQuery = "SELECT id FROM users WHERE id = ?";
-                try (PreparedStatement checkUserStatement = connection.prepareStatement(checkUserQuery)) {
+                try ( PreparedStatement checkUserStatement = connection.prepareStatement(checkUserQuery)) {
                     checkUserStatement.setInt(1, userId);
                     ResultSet resultSet = checkUserStatement.executeQuery();
 
                     if (resultSet.next()) {
                         // User with the given ID exists, update their hours
                         String assignHoursQuery = "UPDATE users SET hours = ? WHERE id = ?";
-                        try (PreparedStatement assignHoursStatement = connection.prepareStatement(assignHoursQuery)) {
+                        try ( PreparedStatement assignHoursStatement = connection.prepareStatement(assignHoursQuery)) {
                             assignHoursStatement.setInt(1, hours);
                             assignHoursStatement.setInt(2, userId);
                             assignHoursStatement.executeUpdate();
@@ -432,7 +424,6 @@ public class Orchestrator {
             return "{ \"status\": \"error\", \"message\": \"Failed to assign hours. Error: " + e.getMessage() + "\" }";
         }
     }
-
 
     
     @PreDestroy
